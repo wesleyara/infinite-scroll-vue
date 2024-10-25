@@ -1,50 +1,36 @@
+<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import { useFetch } from "../composable/useFetch";
+import { useInfiniteScroll } from "@vueuse/core";
 
-const msg = ref("Hello Vite + Vue 3 Template");
-const count = ref(0);
+const { data, skip, isLoading } = useFetch();
+
+const scroll = ref<HTMLElement | null>(null);
+const array = ref<any[]>([]);
+
+watch(data, () => {
+  array.value.push(...data.value);
+});
+
+const getUserOnScroll = async () => {
+  skip.value += 30;
+};
+
+useInfiniteScroll(scroll, getUserOnScroll, {
+  distance: 3,
+  canLoadMore: () => !isLoading.value,
+});
 </script>
 
 <template>
-  <section
-    class="flex flex-col items-center justify-center gap-5 px-2 text-center"
+  <ul
+    v-if="array.length > 0"
+    ref="scroll"
+    class="h-[300px] overflow-auto bg-red-200"
   >
-    <h1>{{ msg }}</h1>
-
-    <img alt="Vue logo" src="/vite.svg" class="h-32 w-32" />
-
-    <button
-      class="rounded-md border border-black p-2"
-      type="button"
-      @click="count++"
-    >
-      count is {{ count }}
-    </button>
-
-    <span>
-      <p>
-        Edit
-        <code class="rounded-md bg-[#ebebeb] p-1 font-barlow"
-          >views/HomeView.vue</code
-        >
-        to test HMR
-      </p>
-
-      <p>
-        This template is also available in
-        <a
-          class="text-blue-500 hover:underline"
-          href="https://github.com/wesleyara/vue-template"
-          target="_blank"
-        >
-          GitHub
-        </a>
-      </p>
-
-      <p>
-        Have configured Eslint, Prettier, Pinia, TailwindCSS, VueIcons, VueUse,
-        Vue Devtools and Vue Router.
-      </p>
-    </span>
-  </section>
+    <li v-for="item of array" :key="item">
+      {{ item.firstName }}
+    </li>
+  </ul>
 </template>

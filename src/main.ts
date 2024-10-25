@@ -7,6 +7,7 @@ import { OhVueIcon, addIcons } from "oh-vue-icons";
 import { BiGithub } from "oh-vue-icons/icons";
 import { createPinia } from "pinia";
 import router from "./router";
+import { VueQueryPlugin } from "@tanstack/vue-query";
 
 addIcons(BiGithub);
 
@@ -16,4 +17,5 @@ const pinia = createPinia();
 app.component("VIcon", OhVueIcon);
 app.use(pinia);
 app.use(router);
+app.use(VueQueryPlugin)
 app.mount("#app");
